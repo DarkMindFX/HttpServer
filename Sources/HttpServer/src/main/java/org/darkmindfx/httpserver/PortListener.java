@@ -2,6 +2,8 @@ package org.darkmindfx.httpserver;
 
 import java.net.*;
 import java.io.*;
+import java.util.Properties;
+import java.util.UUID;
 
 
 public class PortListener {
@@ -9,8 +11,8 @@ public class PortListener {
     private int port = 8081;
     private boolean isRunning = true;
 
-    public PortListener(int port) {
-        this.port = port;
+    public PortListener(Properties props) {
+        this.port = Integer.parseInt(props.getProperty("SERVER_PORT"));
     }
 
     public void listen() throws IOException {
@@ -24,7 +26,7 @@ public class PortListener {
 
             System.out.println("New connection received");
 
-            ConnectionHandler connHandler = new ConnectionHandler(socket);
+            ConnectionHandler connHandler = new ConnectionHandler(socket, UUID.randomUUID());
         }
     }
 
