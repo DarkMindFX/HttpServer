@@ -11,7 +11,10 @@ public class PortListener {
     private int port = 8081;
     private boolean isRunning = true;
 
+    private Properties serverProperties;
+
     public PortListener(Properties props) {
+        this.serverProperties = props;
         this.port = Integer.parseInt(props.getProperty("SERVER_PORT"));
     }
 
@@ -26,7 +29,7 @@ public class PortListener {
 
             System.out.println("New connection received");
 
-            ConnectionHandler connHandler = new ConnectionHandler(socket, UUID.randomUUID());
+            ConnectionHandler connHandler = new ConnectionHandler(socket, this.serverProperties, UUID.randomUUID());
         }
     }
 

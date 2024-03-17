@@ -2,10 +2,7 @@ package org.darkmindfx.httpserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ConnectionHandler implements Runnable {
     private Socket socket;
@@ -15,12 +12,15 @@ public class ConnectionHandler implements Runnable {
 
     DataOutputStream outStream;
 
+    private Properties serverProperties;
+
     private UUID handlerId;
 
 
-    public ConnectionHandler(Socket socket, UUID handlerId) throws IOException {
+    public ConnectionHandler(Socket socket, Properties serverProperties, UUID handlerId) throws IOException {
         this.socket = socket;
         this.handlerId = handlerId;
+        this.serverProperties = serverProperties;
 
         trdHandler = new Thread(this);
         trdHandler.start();
