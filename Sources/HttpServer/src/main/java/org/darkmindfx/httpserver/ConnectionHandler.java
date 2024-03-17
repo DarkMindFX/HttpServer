@@ -16,11 +16,14 @@ public class ConnectionHandler implements Runnable {
 
     private UUID handlerId;
 
+    private ResourceCache cache;
 
-    public ConnectionHandler(Socket socket, Properties serverProperties, UUID handlerId) throws IOException {
+
+    public ConnectionHandler(Socket socket, Properties serverProperties, ResourceCache cache, UUID handlerId) throws IOException {
         this.socket = socket;
         this.handlerId = handlerId;
         this.serverProperties = serverProperties;
+        this.cache = cache;
 
         trdHandler = new Thread(this);
         trdHandler.start();
@@ -50,7 +53,58 @@ public class ConnectionHandler implements Runnable {
         }
     }
 
-    private void handleRequest(HttpRequest request) {
+    private void handleRequest(HttpRequest request) throws IOException {
+        int respCode = 500;
+        byte[] content = null;
+        try {
+            content = cache.getResourceContent(request.getHeader().getResource());
+
+            respCode = 200;
+        }
+        catch (FileNotFoundException exNotFound) {
+            respCode = 404;
+        }
+        catch (Exception ex) {
+            respCode = 500;
+        }
+
+        sendResponse(respCode, content);
+
+        outStream.flush();
+        outStream.close();
+        inStream.close();
+        this.socket.close();
+    }
+
+    private void sendResponse(int respCode, byte[] content) throws IOException {
+        StringBuffer sbResponse = new StringBuffer();
+        sbResponse.append("HTTP/1.1");
+        switch (respCode) {
+            case 200:
+                sbResponse.append("200 OK");
+                break;
+            case 404:
+                sbResponse.append("404 NotFound");
+                break;
+            case 500:
+                sbResponse.append("500 InternalServerError");
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + respCode);
+        }
+        sbResponse.append("\n");
+        sbResponse.append("Server: DarkMindFX.HttpServer\n");
+        sbResponse.append("Content-Type: text/html\n");
+        if(content != null && content.length > 0) {
+            sbResponse.append( String.format("Content-Length: %d\n", content.length));
+        }
+        sbResponse.append("\n");
+
+        outStream.writeUTF(sbResponse.toString());
+        if(content != null && content.length > 0) {
+            outStream.write(content);
+        }
+
 
     }
 
