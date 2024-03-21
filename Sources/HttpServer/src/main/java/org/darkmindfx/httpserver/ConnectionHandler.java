@@ -78,20 +78,8 @@ public class ConnectionHandler implements Runnable {
 
     private void sendResponse(int respCode, byte[] content) throws IOException {
         StringBuffer sbResponse = new StringBuffer();
-        sbResponse.append("HTTP/1.1 ");
-        switch (respCode) {
-            case 200:
-                sbResponse.append("200 OK");
-                break;
-            case 404:
-                sbResponse.append("404 NotFound");
-                break;
-            case 500:
-                sbResponse.append("500 InternalServerError");
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + respCode);
-        }
+        sbResponse.append("HTTP/1.1 " + ResponseCodeMap.getResponseHeader(respCode));
+
         sbResponse.append("\n");
         sbResponse.append("Server: DarkMindFX.HttpServer\n");
         sbResponse.append("Content-Type: text/html\n");
