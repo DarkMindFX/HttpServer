@@ -21,7 +21,9 @@ public class Main {
                 Properties props = new Properties();
                 props.load(fis);
 
-                PortListener listener = new PortListener(props);
+                ResourceCache resCache = new ResourceCache(props);
+
+                PortListener listener = new PortListener(props, resCache);
                 listener.listen();
             }
             else {

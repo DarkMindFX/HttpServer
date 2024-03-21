@@ -74,7 +74,7 @@ public class ResourceCache implements Runnable  {
         String path = Path.of(this.rootFolder, resource).toString();
         File file = new File(path);
         if(file.exists()) {
-            byte[] content = null;
+            byte[] content = new byte[(int)file.length()];
             InputStream is = new FileInputStream(file);
             int bytesRead = is.read(content);
 

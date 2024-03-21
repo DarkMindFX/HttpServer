@@ -78,7 +78,7 @@ public class ConnectionHandler implements Runnable {
 
     private void sendResponse(int respCode, byte[] content) throws IOException {
         StringBuffer sbResponse = new StringBuffer();
-        sbResponse.append("HTTP/1.1");
+        sbResponse.append("HTTP/1.1 ");
         switch (respCode) {
             case 200:
                 sbResponse.append("200 OK");
@@ -100,7 +100,7 @@ public class ConnectionHandler implements Runnable {
         }
         sbResponse.append("\n");
 
-        outStream.writeUTF(sbResponse.toString());
+        outStream.write(sbResponse.toString().getBytes());
         if(content != null && content.length > 0) {
             outStream.write(content);
         }

@@ -11,10 +11,13 @@ public class PortListener {
     private int port = 8081;
     private boolean isRunning = true;
 
-    private Properties serverProperties;
+    final private Properties serverProperties;
 
-    public PortListener(Properties props) {
+    final private ResourceCache resourceCache;
+
+    public PortListener(Properties props, ResourceCache resourceCache) {
         this.serverProperties = props;
+        this.resourceCache = resourceCache;
         this.port = Integer.parseInt(props.getProperty("SERVER_PORT"));
     }
 
@@ -29,7 +32,11 @@ public class PortListener {
 
             System.out.println("New connection received");
 
-            ConnectionHandler connHandler = new ConnectionHandler(socket, this.serverProperties, UUID.randomUUID());
+            ConnectionHandler connHandler = new ConnectionHandler(  socket,
+                                                                    this.serverProperties,
+                                                                    this.resourceCache,
+                                                                    UUID.randomUUID());
+
         }
     }
 
